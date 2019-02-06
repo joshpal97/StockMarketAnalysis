@@ -1,6 +1,5 @@
 import argparse
 import urllib
-import urllib2
 import json
 import datetime
 import random
@@ -140,8 +139,8 @@ class TwitterData:
         jsonData = json.loads(response)
         tweets = []
         if 'errors' in jsonData:
-            print "API Error"
-            print jsonData['errors']
+            print ("API Error")
+            print (jsonData['errors'])
         else:
             for item in jsonData['statuses']:
                 #print item['created_at']

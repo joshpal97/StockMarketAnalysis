@@ -35,14 +35,14 @@ keyword = '$'+response
 # time = 'today'
 time = 'lastweek'
 
-print "Fetch twitter data for "+ response+" company keyword...."
+print ("Fetch twitter data for "+ response+" company keyword....")
 
 twitterData = get_twitter_data.TwitterData('2017-05-20')
 tweets = twitterData.getTwitterData(keyword, time)
 
-print "Twitter data fetched \n"
+print ("Twitter data fetched \n")
 
-print "Fetch yahoo finance data for "+response+" given company keyword.... "
+print ("Fetch yahoo finance data for "+response+" given company keyword.... ")
 keyword2 = response
 
 
@@ -72,9 +72,9 @@ for i in range(len(historical_data)):
     yahoo_high_price.update({date: historical_data[i]['High']})
     yahoo_low_price.update({date: historical_data[i]['Low']})
 
-print "Yahoo data fetched \n"
+print ("Yahoo data fetched \n")
 
-print "Collect tweet and process twitter corpus...."
+print ("Collect tweet and process twitter corpus....")
 tweet_s = []
 for key,val in tweets.items():
     for value in val:
@@ -229,12 +229,12 @@ def sentiment_analyzer():
 
 # Main
 
-print "Processing tweets and store in CSV file ...."
+print ("Processing tweets and store in CSV file ....")
 sentiment_analyzer()
 
-print "Tweet corpus processed \n "
+print ("Tweet corpus processed \n ")
 
-print "Preparing dataset...."
+print ("Preparing dataset....")
 # Read the tweets one by one and process it
 inpTweets = csv.reader(open('Data/SampleTweets.csv', 'rb'), delimiter=',')
 stopWords = getStopWordList('Data/stopwords.txt')
@@ -245,7 +245,7 @@ tweets = []
 dates =[]
 date_split =[]
 list_tweet = []
-print "Creating feature set and generating feature matrix...."
+print ("Creating feature set and generating feature matrix....")
 for row in inpTweets:
     if len(row) == 4:
         list_tweet.append(row)
@@ -263,9 +263,9 @@ for row in inpTweets:
 
 result = getFeatureVectorAndLabels(tweets, featureList)
 
-print "Dataset is ready \n"
+print ("Dataset is ready \n")
 
-print "Sentiment prediction using Naive Bayes Bernoulli and SVM model...."
+print ("Sentiment prediction using Naive Bayes Bernoulli and SVM model....")
 # Naive Bernoulli and SVM Algorithm
 data2 = open('newfile.txt', 'r')
 
@@ -366,24 +366,24 @@ for train_index, test_index in kf:
 
 # Naive Bayes end
 
-print "Bernoulli NB"
-print "Accuracy =" ,max(NBSKL_accuracy)
-print "Precision = ", final_precision
-print "Recall = ", final_recall
-print "F-Measure", final_fmeasure
-print "\n"
-print "SVM"
-print "Accuracy =", max(svm_accuracy)
-print "Precision = ", svm_final_precision
-print "Recall = ", svm_final_recall
-print "F-Measure", svm_final_fmeasure
-print "\n"
+print ("Bernoulli NB")
+print ("Accuracy =" ,max(NBSKL_accuracy))
+print ("Precision = ", final_precision)
+print ("Recall = ", final_recall)
+print ("F-Measure", final_fmeasure)
+print ("\n")
+print ("SVM")
+print ("Accuracy =", max(svm_accuracy))
+print ("Precision = ", svm_final_precision)
+print ("Recall = ", svm_final_recall)
+print ("F-Measure", svm_final_fmeasure)
+print ("\n")
 
 
 
-print "Prediction completed \n"
+print ("Prediction completed \n")
 
-print "Preparing dataset for stock prediction using yahoo finance and tweet sentiment...."
+print ("Preparing dataset for stock prediction using yahoo finance and tweet sentiment....")
 date_tweet_details = {}
 file = open("stockpredict.txt", "w")
 for dateVal in np.unique(date_split):
@@ -433,11 +433,11 @@ for dateVal in np.unique(date_split):
         opening_price = yahoo_open_price[dateVal]
         closing_price = yahoo_close_price[dateVal]
 
-    print dateVal
-    print "Total tweets = ", date_totalCount, " Positive tweets = ", date_PosCount, " Negative tweets = ", date_NegCount
+    print (dateVal)
+    print ("Total tweets = ", date_totalCount, " Positive tweets = ", date_PosCount, " Negative tweets = ", date_NegCount)
     # print "Total sentiment score = ", total_sentiment_score
-    print "Opening Price = ", opening_price
-    print "Closing Price = ", closing_price
+    print ("Opening Price = ", opening_price)
+    print ("Closing Price = ", closing_price)
 
 
     market_status = 0
@@ -453,7 +453,8 @@ for dateVal in np.unique(date_split):
     # print " Neutral Tweet For date =",dateVal ," Count =" , date_NutCount
 file.close()
 
-print "Dataset is ready for stock prediction \n"
+print ("Dataset is ready for stock prediction \n")
+input('Press ENTER to exit')
 # end
 
 
