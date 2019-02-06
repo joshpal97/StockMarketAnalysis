@@ -11,7 +11,7 @@ class YahooData:
         yahoo = Share(keyword)
         historical_data = yahoo.get_historical(self.startDate, self.endDate)
         #historical_data =
-        print historical_data
+        print (historical_data)
 
         #for i in range(len(historical_data)):
         #    print historical_data[i]

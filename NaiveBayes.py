@@ -1,5 +1,5 @@
 # nD k-Class Gausian Discriminant Analysis
-import urllib2
+# import urllib2
 
 import matplotlib.pyplot as plot
 import numpy as np
@@ -7,7 +7,7 @@ import math
 from math import log
 from sklearn import datasets, linear_model
 from numpy.linalg import inv
-from sklearn.cross_validation import KFold
+# from sklearn.cross_validation import KFold
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support
 
@@ -44,7 +44,7 @@ print target_matrix
 class NaiveBayesBernoulli():
 
     def __init__(self):
-        print ""
+         print ("")
 
 # Calculate gradient alpha
     def membership_function(self, test_set, alpha, priorVal):
@@ -58,8 +58,7 @@ class NaiveBayesBernoulli():
                 value_1.append(log(x))
                 value_2.append(log(1 - x))
 
-        gX = [(np.sum(((test_set[:,j][i]*value_1[j]) + ((1-test_set[:,j][i])*value_2[j])) for j in range(test_set.shape[1]-1))
-              + math.log(priorVal)) for i in range(test_set.shape[0])]
+        gX = [(np.sum(((test_set[:,j][i]*value_1[j]) + ((1-test_set[:,j][i])*value_2[j])) for j in range(test_set.shape[1]-1)) + math.log(priorVal)) for i in range(test_set.shape[0])]
         return gX
 
 # Calculate prediction

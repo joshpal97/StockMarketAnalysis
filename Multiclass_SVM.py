@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils import check_random_state
 from sklearn.preprocessing import LabelEncoder
-from sklearn.cross_validation import KFold
+# from sklearn.cross_validation import KFold
 from sklearn.metrics import accuracy_score
 
 

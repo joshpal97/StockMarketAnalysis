@@ -16,11 +16,12 @@ import re
 import tweepy
 import csv
 import sys
-from StringIO import StringIO
+from io import StringIO
 from zipfile import ZipFile
-from urllib import urlopen
+from urllib.request import urlopen
+import urllib.parse
 import numpy as np
-from sklearn.cross_validation import KFold
+# from sklearn.cross_validation import KFold
 from sklearn.metrics import accuracy_score
 import Multiclass_SVM
 from sklearn.naive_bayes import BernoulliNB
@@ -59,7 +60,7 @@ class TwitterData:
             # end loop
 
             # Write data to a pickle file
-            filename = 'Data/weekTweets_'+urllib.unquote(keyword.replace("+", " "))+'_'+str(int(random.random()*10000))+'.txt'
+            filename = 'Data/weekTweets_'+urllib.parse.unquote(keyword.replace("+", " "))+'_'+str(int(random.random()*10000))+'.txt'
             outfile = open(filename, 'wb')
             pickle.dump(self.weekTweets, outfile)
             outfile.close()
@@ -97,7 +98,7 @@ class TwitterData:
           def val(key):
             return config.get(key)\
                    or getattr(args_, key)\
-                   or raw_input('Your developper `%s`: ' % key)
+                   or input('Your developper `%s`: ' % key)
           config.update({
             'consumer_key': val('consumer_key'),
             'consumer_secret': val('consumer_secret'),
@@ -130,12 +131,12 @@ class TwitterData:
 
         # Add if additional params are passed
         if params:
-            for key, value in params.iteritems():
+            for key, value in params.items():
                 data[key] = value
 
-        url += urllib.urlencode(data)
+        url += urllib.parse.urlencode(data)
 
-        response = self.oauth_req(url)
+        response = self.oauth_req(urllib.parse.quote(url)) 
         jsonData = json.loads(response)
         tweets = []
         if 'errors' in jsonData:

@@ -6,11 +6,11 @@ import re
 import tweepy
 import csv
 import sys
-from StringIO import StringIO
+from io import StringIO
 from zipfile import ZipFile
-from urllib import urlopen
+from urllib.request import urlopen
 import numpy as np
-from sklearn.cross_validation import KFold
+# from sklearn.cross_validation import KFold
 from sklearn.metrics import accuracy_score
 import Multiclass_SVM
 from sklearn.naive_bayes import BernoulliNB
@@ -24,10 +24,10 @@ print ("Example --> AAPL GOOG YHOO MSFT GS")
 print ("-------------------------------------------------")
 print ("-------------------------------------------------")
 
-response = raw_input("Please enter Keyword: ")
+response = input("Please enter Keyword: ")
 
 while not response:
-    response = raw_input("Please enter Keyword: ")
+    response = input("Please enter Keyword: ")
 
 
 # Get Tweets
