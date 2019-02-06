@@ -7,6 +7,7 @@ import tweepy
 import csv
 import sys
 from io import StringIO
+from io import BytesIO
 from zipfile import ZipFile
 from urllib.request import urlopen
 import numpy as np
@@ -18,6 +19,9 @@ import NaiveBayes
 from sklearn.metrics import confusion_matrix
 import datetime
 import oauth2
+import pandas as pd 
+from afinn import Afinn
+
 # Get input from user
 print ("Enter any keyword listed below")
 print ("Example --> AAPL GOOG YHOO MSFT GS")
@@ -58,15 +62,17 @@ keyword2 = response
 #     yahoo_close_price.update({date: historical_data[i]['Close']})
 #     yahoo_high_price.update({date: historical_data[i]['High']})
 #     yahoo_low_price.update({date: historical_data[i]['Low']})
-quandl.ApiConfig.api_key = "nFXzo5mjYxKTdFvxmx1E"
+quandl.ApiConfig.api_key = "QxZRKz8d6EKVveRDqBZs"
 historical_data = quandl.get('WIKI/'+keyword2, start_date="2017-05-15", end_date="2017-05-19",returns="numpy")
 yahoo_open_price = {}
 yahoo_close_price = {}
 yahoo_high_price = {}
 yahoo_low_price = {}
 for i in range(len(historical_data)):
-    date = historical_data[i]['Date'].date()
-    date=date.strftime('%Y-%m-%d')
+    # t= pd.to_datetime(str(date)) 
+    # timestring = 
+    date = pd.to_datetime(historical_data[i]['Date'])
+    date= date.strftime('%Y.%m.%d')
     yahoo_open_price.update({date: historical_data[i]['Open']})
     yahoo_close_price.update({date: historical_data[i]['Close']})
     yahoo_high_price.update({date: historical_data[i]['High']})
@@ -185,7 +191,7 @@ def getFeatureVectorAndLabels(tweets, featureList):
 
 # Download the AFINN lexicon, unzip, and read the latest word list in AFINN-111.txt
 url = urlopen('http://www2.compute.dtu.dk/~faan/data/AFINN.zip')
-zipfile = ZipFile(StringIO(url.read()))
+zipfile = ZipFile(BytesIO(url.read()))
 afinn_file = zipfile.open('AFINN/AFINN-111.txt')
 
 afinn = dict()
