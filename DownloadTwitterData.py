@@ -11,16 +11,15 @@ from io import BytesIO
 from zipfile import ZipFile
 from urllib.request import urlopen
 import numpy as np
-# from sklearn.cross_validation import KFold
+from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
-import Multiclass_SVM
+# import Multiclass_SVM
 from sklearn.naive_bayes import BernoulliNB
 import NaiveBayes
 from sklearn.metrics import confusion_matrix
 import datetime
 import oauth2
 import pandas as pd 
-from afinn import Afinn
 
 # Get input from user
 print ("Enter any keyword listed below")
@@ -37,20 +36,19 @@ while not response:
 # Get Tweets
 keyword = '$'+response
 # time = 'today'
-time = 'lastweek'
+# time = 'lastweek'
+time = 'none'
 
 print ("Fetch twitter data for "+ response+" company keyword....")
 
-twitterData = get_twitter_data.TwitterData('2017-05-20')
+twitterData = get_twitter_data.TwitterData('2019-02-16')
 tweets = twitterData.getTwitterData(keyword, time)
 
 print ("Twitter data fetched \n")
 
-print ("Fetch yahoo finance data for "+response+" given company keyword.... ")
-keyword2 = response
-
-
-# yahooData = get_yahoo_data.YahooData('2017-01-01', "2017-03-30")
+# print ("Fetch Yahoo finance data for "+response+" given company keyword.... ")
+# keyword2 = response
+# yahooData = get_yahoo_data.YahooData('2019-02-11', "2017-02-15")
 # historical_data = yahooData.getYahooData(keyword2)
 # yahoo_open_price = {}
 # yahoo_close_price = {}
@@ -62,6 +60,14 @@ keyword2 = response
 #     yahoo_close_price.update({date: historical_data[i]['Close']})
 #     yahoo_high_price.update({date: historical_data[i]['High']})
 #     yahoo_low_price.update({date: historical_data[i]['Low']})
+#     print("Date: " , historical_data[i]['Date'] , "\n")
+#     print("open: ",historical_data[i]['Open'],"\n")
+#     print("close: " , historical_data[i]['Close'], "\n")
+#     print("high: " , historical_data[i]['High'] , "\n")
+#     print("low: " , historical_data[i]['Low'] , "\n\n\n\n\n")
+
+print ("Fetch Quandl finance data for "+response+" given company keyword.... ")
+keyword2 = response
 quandl.ApiConfig.api_key = "QxZRKz8d6EKVveRDqBZs"
 historical_data = quandl.get('WIKI/'+keyword2, start_date="2017-05-15", end_date="2017-05-19",returns="numpy")
 yahoo_open_price = {}
@@ -69,8 +75,6 @@ yahoo_close_price = {}
 yahoo_high_price = {}
 yahoo_low_price = {}
 for i in range(len(historical_data)):
-    # t= pd.to_datetime(str(date)) 
-    # timestring = 
     date = pd.to_datetime(historical_data[i]['Date'])
     date= date.strftime('%Y.%m.%d')
     yahoo_open_price.update({date: historical_data[i]['Open']})
@@ -78,13 +82,20 @@ for i in range(len(historical_data)):
     yahoo_high_price.update({date: historical_data[i]['High']})
     yahoo_low_price.update({date: historical_data[i]['Low']})
 
-print ("Yahoo data fetched \n")
+    print("Date: " , historical_data[i]['Date'] , "\n")
+    print("open: ",historical_data[i]['Open'],"\n")
+    print("close: " , historical_data[i]['Close'], "\n")
+    print("high: " , historical_data[i]['High'] , "\n")
+    print("low: " , historical_data[i]['Low'] , "\n\n\n\n\n")
+
+print ("Stock data fetched \n")
 
 print ("Collect tweet and process twitter corpus....")
 tweet_s = []
 for key,val in tweets.items():
     for value in val:
         tweet_s.append(value)
+        # print(value)
 
 csvFile = open('Data/SampleTweets.csv', 'w')
 csvWriter = csv.writer(csvFile)
@@ -171,7 +182,7 @@ def getFeatureVectorAndLabels(tweets, featureList):
             if word in map:
                 map[word] = 1
         # end for loop
-        values = map.values()
+        values = list(map.values())
         feature_vector.append(values)
         if (tweet_opinion == '|positive|'):
             label = 0
@@ -205,7 +216,7 @@ def tokenize(text):
 
 def afinn_sentiment(terms, afinn):
 
-    total = 0.
+    total = 0
     for t in terms:
         if t in afinn:
             total += afinn[t]
@@ -225,13 +236,17 @@ def sentiment_analyzer():
     for i in range(len(afinn_total)):
         if afinn_total[i] > 0:
             positive_tweet_counter.append(afinn_total[i])
-            csvWriter.writerow(["|positive|", tweet_s[i].encode('utf-8').split("|")[0], tweet_s[i].encode('utf-8').split("|")[1], float(afinn_total[i])])
+            csvWriter.writerow(["|positive|", tweet_s[i].split("|")[0], tweet_s[i].split("|")[1].encode('utf-8'), float(afinn_total[i])])
         elif afinn_total[i] < 0:
             negative_tweet_counter.append(afinn_total[i])
-            csvWriter.writerow(["|negative|", tweet_s[i].encode('utf-8').split("|")[0], tweet_s[i].encode('utf-8').split("|")[1], float(afinn_total[i])])
+            csvWriter.writerow(["|negative|", tweet_s[i].split("|")[0], tweet_s[i].split("|")[1].encode('utf-8'), float(afinn_total[i])])
         else:
             neutral_tweet_counter.append(afinn_total[i])
-            csvWriter.writerow(["|neutral|", tweet_s[i].encode('utf-8').split("|")[0], tweet_s[i].encode('utf-8').split("|")[1], float(afinn_total[i])])
+            # print(["Neutral"])
+            # print([tweet_s[i].split("|")[0].encode('utf-8')])
+            # print([tweet_s[i].split("|")[1].encode('utf-8')])
+            # print([float(afinn_total[i])])
+            csvWriter.writerow(["|neutral|", tweet_s[i].split("|")[0], tweet_s[i].split("|")[1].encode('utf-8'), float(afinn_total[i])])
 
 # Main
 
@@ -242,7 +257,7 @@ print ("Tweet corpus processed \n ")
 
 print ("Preparing dataset....")
 # Read the tweets one by one and process it
-inpTweets = csv.reader(open('Data/SampleTweets.csv', 'rb'), delimiter=',')
+inpTweets = csv.reader(open('Data/SampleTweets.csv', 'r'), delimiter=',')
 stopWords = getStopWordList('Data/stopwords.txt')
 count = 0;
 featureList = []
@@ -271,14 +286,14 @@ result = getFeatureVectorAndLabels(tweets, featureList)
 
 print ("Dataset is ready \n")
 
-print ("Sentiment prediction using Naive Bayes Bernoulli and SVM model....")
-# Naive Bernoulli and SVM Algorithm
+print ("Sentiment prediction using Naive Bayes Bernoulli ....")
+# Naive Bernoulli Algorithm
 data2 = open('newfile.txt', 'r')
 
 inp_data2 = []
 files = np.loadtxt(data2,dtype=str, delimiter=',')
-
 inp_data2 = np.array(files[:,0:-1], dtype='float')
+print(inp_data2.shape)
 givenY = files[:,-1]
 
 target2=np.zeros(len(givenY), dtype='int')
@@ -292,8 +307,8 @@ for cls in range(len(givenY)):
 X = np.array(inp_data2)
 y = np.array(target2)
 
-# print type(X)
-# print type(y)
+# print (type(X))
+# print (type(y))
 
 max_gX = {}
 maximum_gX = []
@@ -312,21 +327,10 @@ svm_final_fmeasure = 0
 svm_accuracy = []
 NB_accuracy = []
 NBSKL_accuracy = []
-kf = KFold(X.shape[0], n_folds=6, shuffle=False)
-for train_index, test_index in kf:
+kf = KFold(n_splits = 6, shuffle=False)
+for train_index, test_index in kf.split(X):
     X_train, X_test = X[train_index], X[test_index]
     y_train, y_test = y[train_index], y[test_index]
-
-    # SVM Start
-
-    clf = Multiclass_SVM.MulticlassSVM(C=0.1, tol=0.01, max_iter=100, random_state=0, verbose=1)
-    clf.fit(X_train, y_train)
-    predicted_y = clf.calculate_prediction(X_test)
-    svm_accuracy.append(accuracy_score(y_test,predicted_y))
-    svm_confusion_mat = confusion_matrix(y_test, predicted_y)
-    sv_accuracy, svm_precision_val, svm_recall_val, svm_f_measure_val = clf.svm_findOtherParameters(svm_confusion_mat)
-
-    # SVM end
 
     # Naive Bayes
 
@@ -362,13 +366,13 @@ for train_index, test_index in kf:
             final_fmeasure = f_measure_val
             temp = accuracy_score(y_test,predictedBNB_y)
 
-    if accuracy_score(y_test,predicted_y) > svn_temp:
-        if (accuracy_score(y_test,predicted_y) != 1):
-            svm_final_accuracy = accuracy_score(y_test,predicted_y)
-            svm_final_precision = svm_precision_val
-            svm_final_recall = svm_recall_val
-            svm_final_fmeasure = svm_f_measure_val
-            svn_temp = accuracy_score(y_test,predicted_y)
+    # if accuracy_score(y_test,predicted_y) > svn_temp:
+    #     if (accuracy_score(y_test,predicted_y) != 1):
+    #         svm_final_accuracy = accuracy_score(y_test,predicted_y)
+    #         svm_final_precision = svm_precision_val
+    #         svm_final_recall = svm_recall_val
+    #         svm_final_fmeasure = svm_f_measure_val
+    #         svn_temp = accuracy_score(y_test,predicted_y)
 
 # Naive Bayes end
 
@@ -378,18 +382,10 @@ print ("Precision = ", final_precision)
 print ("Recall = ", final_recall)
 print ("F-Measure", final_fmeasure)
 print ("\n")
-print ("SVM")
-print ("Accuracy =", max(svm_accuracy))
-print ("Precision = ", svm_final_precision)
-print ("Recall = ", svm_final_recall)
-print ("F-Measure", svm_final_fmeasure)
-print ("\n")
-
-
 
 print ("Prediction completed \n")
 
-print ("Preparing dataset for stock prediction using yahoo finance and tweet sentiment....")
+print ("Preparing dataset for stock prediction using Quandl and tweet sentiment....")
 date_tweet_details = {}
 file = open("stockpredict.txt", "w")
 for dateVal in np.unique(date_split):

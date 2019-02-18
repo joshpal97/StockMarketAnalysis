@@ -21,13 +21,14 @@ from zipfile import ZipFile
 from urllib.request import urlopen
 import urllib.parse
 import numpy as np
-# from sklearn.cross_validation import KFold
+from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
-import Multiclass_SVM
+# import Multiclass_SVM
 from sklearn.naive_bayes import BernoulliNB
 import NaiveBayes
 from sklearn.metrics import confusion_matrix
 import datetime
+# from textblob import TextBlob
 
 
 class TwitterData:
@@ -47,7 +48,7 @@ class TwitterData:
             newDate = self.currDate + dateDiff
             self.weekDates.append(newDate.strftime("%Y-%m-%d"))
         # end loop
-        # print "New Week Dates =",self.weekDates
+        # print ("New Week Dates =",self.weekDates)
     # end
 
     # start getWeeksData
@@ -70,6 +71,15 @@ class TwitterData:
                 # params = {'since': self.weekDates[i]}
                 self.weekTweets[i] = self.getData(keyword, params)
             # end loop
+        else:
+            for i in range(5, 0, -1):
+                # print(self.weekDates[i-1])
+                params = {'since': self.weekDates[i], 'until': self.weekDates[i-1]}
+                self.weekTweets[i] = self.getData(keyword, params)
+            filename = 'Data/weekTweets_'+urllib.parse.unquote(keyword.replace("+", " "))+'_'+str(int(random.random()*10000))+'.txt'
+            outfile = open(filename, 'wb')
+            pickle.dump(self.weekTweets, outfile)
+            outfile.close()
         return self.weekTweets
     '''
         inpfile = open('data/weekTweets/weekTweets_obama_7303.txt')
@@ -117,45 +127,47 @@ class TwitterData:
 
       resp, content = client.request(
           url,
-          method=http_method,
-          body=post_body or '',
-          headers=http_headers
+          method=http_method
       )
       return content
 
     # start getTwitterData
+
     def getData(self, keyword, params = {}):
         maxTweets = 200
         url = 'https://api.twitter.com/1.1/search/tweets.json?'
-        data = {'q': keyword, 'lang': 'en', 'result_type': 'mixed', 'since_id': 2016,'count': maxTweets, 'include_entities': 0}
-
+        data = {'q': keyword, 'lang': 'en', 'result_type': 'mixed','count': maxTweets, 'include_entities': 0} #, 'since_id': 2016
+        # print("Keyword is this: ", keyword)
         # Add if additional params are passed
         if params:
             for key, value in params.items():
                 data[key] = value
-
+        # print("This is data: ", data)
         url += urllib.parse.urlencode(data)
+        # print("this is the URl: ", url)
 
-        response = self.oauth_req(urllib.parse.quote(url)) 
+        response = self.oauth_req(url) 
         jsonData = json.loads(response)
+        # print(jsonData['statuses'].encode('utf-8'))
         tweets = []
         if 'errors' in jsonData:
             print ("API Error")
             print (jsonData['errors'])
         else:
             for item in jsonData['statuses']:
-                #print item['created_at']
+                # print item['created_at']
                 #d=datetime.DateTime.strp
                 d = datetime.datetime.strptime(item['created_at'], '%a %b %d %H:%M:%S +0000 %Y')
                 #print d
                 #print 456
                 #d=datetime.datetime.now
                 str = d.strftime('%Y-%m-%d')+" | "+item['text'].replace('\n', ' ')
-                #dt = parser.parse(item['created_at'])
-                #tweets.append(item['text'])
-                #print str
+                # dt = parser.parse(item['created_at'])
+                # tweets.append(item['text'])
+                # print (str)
                 tweets.append(str)
         return tweets
+        print("Finished retrieving tweets")
     # end
 
 # end class

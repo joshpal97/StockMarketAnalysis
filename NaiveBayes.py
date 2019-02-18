@@ -1,46 +1,12 @@
-# nD k-Class Gausian Discriminant Analysis
-# import urllib2
-
-import matplotlib.pyplot as plot
 import numpy as np
+# import matplotlib.pyplot as plot
 import math
 from math import log
 from sklearn import datasets, linear_model
 from numpy.linalg import inv
-# from sklearn.cross_validation import KFold
+from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support
-
-"""
-# data2 = urllib2.urlopen("http://mlr.cs.umass.edu/ml/machine-learning-databases/iris/iris.data")
-# print type(data2)
-
-data2 = open('newfile.txt', 'r')
-print type(data2)
-# print file.read()
-
-# For Iris data
-inp_data2 = []
-files = np.loadtxt(data2,dtype=str, delimiter=',')
-
-inp_data2 = np.array(files[:,0:-1], dtype='float')
-givenY = files[:,-1]
-
-target2=np.zeros(len(givenY), dtype='int')
-unique_y = np.unique(givenY)
-
-for cls in range(len(givenY)):
-    for x in range(len(unique_y)):
-        if(givenY[cls] == unique_y[x]):
-            target2[cls] = x
-
-data_matrix = np.matrix(np.array(inp_data2))
-target_matrix = np.array(target2)
-
-print data_matrix
-print target_matrix
-"""
-
 class NaiveBayesBernoulli():
 
     def __init__(self):
@@ -120,60 +86,3 @@ class NaiveBayesBernoulli():
                 f_measure_value.append((float) (2 * precision_value[index] * recall_value[index]) / (precision_value[index] + recall_value[index]))
 
         return accuracy, precision_value, recall_value, f_measure_value
-
-"""
-print "\nK-Fold started "
-max_gX = {}
-
-maximum_gX = []
-kf = KFold(data_matrix.shape[0], n_folds=10, shuffle=True)
-print "No of folds = ",len(kf)
-
-temp = 0
-final_precision=0
-final_recall = 0
-final_fmeasure = 0
-final_accuracy = 0
-
-for train_index, test_index in kf:
-    print kf
-    X_Train_Data, X_Test_Data = data_matrix[train_index], data_matrix[test_index]
-    Y_Train_Data, Y_Test_Data = target_matrix[train_index], target_matrix[test_index]
-
-    # iterate data for each class
-    for clas in np.unique(target_matrix):
-        class_feature_matrix = X_Train_Data[Y_Train_Data==clas]
-        print "Class=", clas, " length = ", len(class_feature_matrix)
-        prior_array = len(class_feature_matrix)*1.0/len(X_Train_Data)
-        print prior_array
-        alpha = [(np.sum(class_feature_matrix[:,i])/len(class_feature_matrix)) for i in range(class_feature_matrix.shape[1])]
-        gX = membership_function(X_Test_Data, alpha, prior_array)
-        max_gX.update({int(clas): gX})
-
-    # find discriminanent function
-    disc_function = discriminant_function(max_gX, np.unique(target_matrix))
-    print disc_function
-    confusion_mat = confusion_matrix(Y_Test_Data, disc_function)
-    print confusion_mat
-
-    # find precision, recall , f-measure
-    accuracy, precision_val, recall_val, f_measure_val = findOtherParameters(confusion_mat)
-
-    if accuracy > temp:
-        if (accuracy != 1):
-            final_accuracy = accuracy
-            final_precision = precision_val
-            final_recall = recall_val
-            final_fmeasure = f_measure_val
-            temp = accuracy
-
-    print "\n K-fold completed \n"
-
-# print errors
-print "Final Output : "
-print "Accuracy = ", final_accuracy
-print "Precision = ", final_precision
-print "Recall = ", final_recall
-print "F-Measure", final_fmeasure
-print "\n Fold Completed \n"
-"""
