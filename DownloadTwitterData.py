@@ -208,6 +208,7 @@ afinn_file = zipfile.open('AFINN/AFINN-111.txt')
 afinn = dict()
 for line in afinn_file:
     parts = line.strip().split()
+    # print("This is Parts: ",parts, "\n\n\n\n\n\n")
     if len(parts) == 2:
         afinn[parts[0]] = int(parts[1])
 
@@ -215,11 +216,11 @@ def tokenize(text):
     return re.sub('\W+', ' ', text.lower()).split()
 
 def afinn_sentiment(terms, afinn):
-
+    # print("IN AFINN\n\n\n\n")
     total = 0
     for t in terms:
-        if t in afinn:
-            total += afinn[t]
+        if t.encode("utf-8") in afinn:
+            total += afinn[t.encode("utf-8")]
     return total
 
 def sentiment_analyzer():
