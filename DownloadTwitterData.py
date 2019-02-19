@@ -22,8 +22,9 @@ import oauth2
 import pandas as pd 
 
 # Get input from user
+# https://www.quandl.com/data/EOD-End-of-Day-US-Stock-Prices
 print ("Enter any keyword listed below")
-print ("Example --> AAPL GOOG YHOO MSFT GS")
+print ("Example --> MSFT(Microsoft), HD(Home Depot), DIS (Disney), BA(Boeing))")
 print ("-------------------------------------------------")
 print ("-------------------------------------------------")
 
@@ -82,11 +83,11 @@ for i in range(len(historical_data)):
     yahoo_high_price.update({date: historical_data[i]['High']})
     yahoo_low_price.update({date: historical_data[i]['Low']})
 
-    # print("Date: " , historical_data[i]['Date'] , "\n")
-    # print("open: ",historical_data[i]['Open'],"\n")
-    # print("close: " , historical_data[i]['Close'], "\n")
-    # print("high: " , historical_data[i]['High'] , "\n")
-    # print("low: " , historical_data[i]['Low'] , "\n\n\n\n\n")
+    print("Date: " , historical_data[i]['Date'] , "\n")
+    print("open: ",historical_data[i]['Open'],"\n")
+    print("close: " , historical_data[i]['Close'], "\n")
+    print("high: " , historical_data[i]['High'] , "\n")
+    print("low: " , historical_data[i]['Low'] , "\n\n\n\n\n")
 
 print ("Stock data fetched \n")
 
@@ -329,6 +330,7 @@ svm_accuracy = []
 NB_accuracy = []
 NBSKL_accuracy = []
 kf = KFold(n_splits = 6, shuffle=False)
+# print()
 for train_index, test_index in kf.split(X):
     X_train, X_test = X[train_index], X[test_index]
     y_train, y_test = y[train_index], y[test_index]
@@ -377,14 +379,14 @@ for train_index, test_index in kf.split(X):
 
 # Naive Bayes end
 
-print ("Bernoulli NB")
-print ("Accuracy =" ,max(NBSKL_accuracy))
-print ("Precision = ", final_precision)
-print ("Recall = ", final_recall)
-print ("F-Measure", final_fmeasure)
-print ("\n")
+# print ("Naive Bayes")
+# print ("Error =" ,1 - min(NBSKL_accuracy))
+# # print ("Precision = ", final_precision)
+# # print ("Recall = ", final_recall)
+# # print ("F-Measure", final_fmeasure)
+# print ("\n")
 
-print ("Prediction completed \n")
+# print ("Prediction completed \n")
 
 print ("Preparing dataset for stock prediction using Quandl and tweet sentiment....")
 date_tweet_details = {}

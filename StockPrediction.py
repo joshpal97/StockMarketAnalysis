@@ -1,7 +1,7 @@
 
 import numpy as np
 import math
-from sklearn.cross_validation import KFold
+from sklearn.model_selection import KFold
 import Multiclass_SVM
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
@@ -10,7 +10,7 @@ from sklearn.metrics import confusion_matrix
 
 # Stock Prediction
 
-print "Read from text file and prepare data matrix & target matrix...."
+print ("Read from text file and prepare data matrix & target matrix....")
 data_Stock = open('stockpredict.txt', 'r')
 inp_dataStock = []
 stockfiles = np.loadtxt(data_Stock, delimiter=',')
@@ -21,13 +21,13 @@ stock_Y = stockfiles[:,-1]
 X_stock = np.array(inp_dataStock)
 y_stock = np.array(stock_Y)
 
-print "Data matrix & target matrix are ready \n"
+print ("Data matrix & target matrix are ready \n")
 
 # NB Classifier
 def summarizeByClass(dataset):
     separated = separateByClass(dataset)
     summaries = {}
-    for classValue, instances in separated.iteritems():
+    for classValue, instances in separated.items():
         summaries[classValue] = summarize(instances)
     return summaries
 
@@ -82,7 +82,7 @@ def calculateClassProbabilities(summaries, inputVector):
 def predict(summaries, inputVector):
     probabilities = calculateClassProbabilities(summaries, inputVector)
     bestLabel, bestProb = None, -1
-    for classValue, probability in probabilities.iteritems():
+    for classValue, probability in probabilities.items():
         if bestLabel is None or probability > bestProb:
             bestProb = probability
             bestLabel = classValue
@@ -108,7 +108,7 @@ def getAccuracy(testSet, predictions):
     return (correct/float(len(testSet))) * 100
 
 
-print "Stock prediction using SVM model...."
+print ("Stock prediction using SVM model....")
 svm_StockPred_accuracy = []
 NBC_accuracy = []
 svn_temp = 0
@@ -118,8 +118,9 @@ svm_final_precision = 0
 svm_final_recall = 0
 svm_final_fmeasure = 0
 
-kf1 = KFold(X_stock.shape[0], n_folds=4, shuffle=False)
-for train_index, test_index in kf1:
+# kf1 = KFold(X_stock.shape[0], n_folds=4, shuffle=False)
+kf1 = KFold(n_splits=4, shuffle=False)
+for train_index, test_index in kf1.split(X_stock):
     X_train, X_test = X_stock[train_index], X_stock[test_index]
     y_train, y_test = y_stock[train_index], y_stock[test_index]
     trainingset, testingset = stockfiles[train_index], stockfiles[test_index]
@@ -150,10 +151,10 @@ for train_index, test_index in kf1:
     print('Accuracy: {0}%').format(accuracy)
     """
 
-print "Stock prediction"
-print "Accuracy =" ,max(svm_StockPred_accuracy)
-print "Precision = ", svm_final_precision
-print "Recall = ", svm_final_recall
-print "F-Measure", svm_final_fmeasure
-print "\n"
-print "Stock predicted successfully. \n"
+print ("Stock prediction")
+print ("Accuracy =" ,max(svm_StockPred_accuracy))
+print ("Precision = ", svm_final_precision)
+print ("Recall = ", svm_final_recall)
+print ("F-Measure", svm_final_fmeasure)
+print ("\n")
+print ("Stock predicted successfully. \n")
