@@ -43,7 +43,7 @@ class TwitterData:
         # print y
         self.weekDates = []
         self.weekDates.append(self.currDate.strftime("%Y-%m-%d"))
-        for i in range(1,10):
+        for i in range(1,20):
             dateDiff = timedelta(days=-i)
             newDate = self.currDate + dateDiff
             self.weekDates.append(newDate.strftime("%Y-%m-%d"))
@@ -72,8 +72,8 @@ class TwitterData:
                 self.weekTweets[i] = self.getData(keyword, params)
             # end loop
         else:
-            for i in range(5, 0, -1):
-                # print(self.weekDates[i-1])
+            for i in range(15, 0, -1):
+                print('i',i,'since', self.weekDates[i], 'until: ', self.weekDates[i-1])
                 params = {'since': self.weekDates[i], 'until': self.weekDates[i-1]}
                 self.weekTweets[i] = self.getData(keyword, params)
             filename = 'Data/weekTweets_'+urllib.parse.unquote(keyword.replace("+", " "))+'_'+str(int(random.random()*10000))+'.txt'
@@ -162,6 +162,7 @@ class TwitterData:
                 #print 456
                 #d=datetime.datetime.now
                 str = d.strftime('%Y-%m-%d')+" | "+item['text'].replace('\n', ' ')
+                print(item['created_at'])
                 # dt = parser.parse(item['created_at'])
                 # tweets.append(item['text'])
                 # print (str)
