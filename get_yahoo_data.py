@@ -14,9 +14,9 @@ class YahooData:
         # print (historical_data)
 
         #for i in range(len(historical_data)):
-        #    print historical_data[i]
-        #    print historical_data[i]['Symbol'], " Open : ",historical_data[i]['Open'], " Close : ",historical_data[i]['Close']
-        return historical_data
+        #    print (historical_data[i])
+        #    print (historical_data[i]['Symbol'], " Open : ",historical_data[i]['Open'], " Close : ",historical_data[i]['Close'])
+        #return historical_data
 
 #historical_data =
 #print historical_data

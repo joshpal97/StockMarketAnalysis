@@ -25,6 +25,7 @@ import pandas as pd
 # https://www.quandl.com/data/EOD-End-of-Day-US-Stock-Prices
 print ("Enter any keyword listed below")
 print ("Example --> MSFT(Microsoft), HD(Home Depot), DIS (Disney), BA(Boeing))")
+print ("Type handle to enter search by Twitter handle")
 print ("-------------------------------------------------")
 print ("-------------------------------------------------")
 
@@ -33,17 +34,32 @@ response = input("Please enter Keyword: ")
 while not response:
     response = input("Please enter Keyword: ")
 
+if (response == "handle"):
+    response = input("Please enter Handle: ")
+    while not response:
+        response = input("Please enter Handle: ")
+    keyword = input("Please enter Stock: ")
+    while not keyword:
+        keyword = input("Please enter Stock: ") 
+else:
+    keyword = response
+    response = '$' + keyword
+
+print(response)
+print(keyword)
 
 # Get Tweets
-keyword = '$'+response
+# keyword = '$'+response
 # time = 'today'
 # time = 'lastweek'
+# time = 'month'
 time = 'none'
 
-print ("Fetch twitter data for "+ response+" company keyword....")
+print ("Fetch Twitter data matching " + response)
 
-twitterData = get_twitter_data.TwitterData('2019-02-16')
-tweets = twitterData.getTwitterData(keyword, time)
+twitterData = get_twitter_data.TwitterData('2019-02-20')
+tweets = twitterData.getTwitterData(response, time)
+print("tweets: ")
 
 print ("Twitter data fetched \n")
 
@@ -67,10 +83,13 @@ print ("Twitter data fetched \n")
 #     print("high: " , historical_data[i]['High'] , "\n")
 #     print("low: " , historical_data[i]['Low'] , "\n\n\n\n\n")
 
+csvFile = open('Data/StockPrices.csv', 'w')
+csvWriter = csv.writer(csvFile)
+
 print ("Fetch Quandl finance data for "+response+" given company keyword.... ")
-keyword2 = response
+keyword2 = keyword
 quandl.ApiConfig.api_key = "QxZRKz8d6EKVveRDqBZs"
-historical_data = quandl.get('EOD/'+keyword2, start_date="2019-02-11", end_date="2019-02-15",returns="numpy")
+historical_data = quandl.get('EOD/'+keyword2, start_date="2019-01-15", end_date="2019-02-18",returns="numpy")
 yahoo_open_price = {}
 yahoo_close_price = {}
 yahoo_high_price = {}
@@ -83,11 +102,13 @@ for i in range(len(historical_data)):
     yahoo_high_price.update({date: historical_data[i]['High']})
     yahoo_low_price.update({date: historical_data[i]['Low']})
 
-    print("Date: " , historical_data[i]['Date'] , "\n")
-    print("open: ",historical_data[i]['Open'],"\n")
-    print("close: " , historical_data[i]['Close'], "\n")
-    print("high: " , historical_data[i]['High'] , "\n")
-    print("low: " , historical_data[i]['Low'] , "\n\n\n\n\n")
+    # print("Date: " , historical_data[i]['Date'] , "\n")
+    # print("open: ",historical_data[i]['Open'],"\n")
+    # print("close: " , historical_data[i]['Close'], "\n")
+    # print("high: " , historical_data[i]['High'] , "\n")
+    # print("low: " , historical_data[i]['Low'] , "\n\n\n\n\n")
+
+    csvWriter.writerow([np.datetime_as_string(historical_data[i]['Date'], timezone='local')[:10], historical_data[i]['Open'], historical_data[i]['High'], historical_data[i]['Low']])
 
 print ("Stock data fetched \n")
 
