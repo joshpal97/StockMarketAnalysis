@@ -379,14 +379,14 @@ for train_index, test_index in kf.split(X):
 
 # Naive Bayes end
 
-print ("Bernoulli NB")
-print ("Accuracy =" ,max(NBSKL_accuracy))
-print ("Precision = ", final_precision)
-print ("Recall = ", final_recall)
-print ("F-Measure", final_fmeasure)
-print ("\n")
+# print ("Naive Bayes")
+# print ("Error =" ,1 - min(NBSKL_accuracy))
+# # print ("Precision = ", final_precision)
+# # print ("Recall = ", final_recall)
+# # print ("F-Measure", final_fmeasure)
+# print ("\n")
 
-print ("Prediction completed \n")
+# print ("Prediction completed \n")
 
 print ("Preparing dataset for stock prediction using Quandl and tweet sentiment....")
 date_tweet_details = {}
